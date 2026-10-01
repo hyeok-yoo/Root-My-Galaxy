@@ -36,7 +36,7 @@ object AppPreferences {
     private const val SHIZUKU_MODE = "shizuku_mode"
     private const val PAYLOAD_REPO = "payload_repo"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
-    const val DEFAULT_PAYLOAD_REPO = "goisneto/Root-My-Galaxy-Payloads"
+    const val DEFAULT_PAYLOAD_REPO = "hyeok-yoo/Root-My-Galaxy-Payloads"
     private val PAYLOAD_REPO_PATTERN = Regex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})?/[A-Za-z0-9._-]+$")
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(

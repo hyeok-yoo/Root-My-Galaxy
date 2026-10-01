@@ -11,7 +11,8 @@ from device offsets, native exploit payloads, and KernelSU build artifacts.
 [Latest release](https://github.com/BuSung-dev/Root-My-Galaxy/releases)
 
 The device feed and native payloads are maintained in
-[Root-My-Galaxy-Payloads](https://github.com/BuSung-dev/Root-My-Galaxy-Payloads).
+[Root-My-Galaxy-Payloads](https://github.com/hyeok-yoo/Root-My-Galaxy-Payloads) —
+you're not locked into one feed, see **Custom payload source** below.
 
 ## Application
 
@@ -24,6 +25,22 @@ The app selects a payload whose model list and three-part kernel version match
 the phone. For example, `6.6.98-android15-8-...` matches `6.6.98`. Advanced
 mode filters the catalog by both values and allows manual selection with model
 and kernel-version warnings.
+
+## Custom payload source
+
+Not stuck with a single feed. **Settings → Advanced → Payload source** points
+the app at any GitHub repo that publishes a `targets-v3.json` feed in the same
+shape — your own fork, a community fork that adds devices upstream hasn't
+picked up yet, whatever you trust. Paste `owner/repo` or a full
+`github.com/owner/repo` link; the app validates it, resolves the repo's
+current commit, and pins every artifact download to that exact commit for the
+run. One tap resets to the default feed.
+
+This fork defaults to
+[hyeok-yoo/Root-My-Galaxy-Payloads](https://github.com/hyeok-yoo/Root-My-Galaxy-Payloads),
+which tracks upstream plus fixes that haven't landed there yet (e.g. a working
+Galaxy Tab S9 Ultra `SM-X910` profile whose artifact path was broken in
+upstream's feed).
 
 ## Build
 

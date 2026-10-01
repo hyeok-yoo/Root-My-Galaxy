@@ -139,6 +139,13 @@
     <string name="advanced_mode_description">Manually choose a device-compatible payload during installation</string>
     <string name="shizuku_mode">Use Shizuku</string>
     <string name="shizuku_mode_description">Use Shizuku to run the payload. This can improve reliability.</string>
+    <string name="payload_source">Payload source</string>
+    <string name="payload_source_description">GitHub repository used to fetch exploit and KernelSU files</string>
+    <string name="payload_source_dialog_title">Payload source repository</string>
+    <string name="payload_source_dialog_body">Enter a GitHub repository as owner/repo or a github.com URL. The app reads targets-v3.json and artifacts from its main branch.</string>
+    <string name="payload_source_dialog_hint">owner/repo</string>
+    <string name="payload_source_invalid">Enter a valid GitHub repository (owner/repo)</string>
+    <string name="action_reset_default">Reset to default</string>
     <string name="shizuku_not_running_title">Shizuku is not running</string>
     <string name="shizuku_not_running_body">Start the Shizuku service with adb or root and grant this app permission, then enable this option.</string>
     <string name="action_download_shizuku">Download Shizuku</string>

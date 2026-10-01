@@ -34,7 +34,10 @@ object AppPreferences {
     private const val THEME_MODE = "theme_mode"
     private const val ADVANCED_MODE = "advanced_mode"
     private const val SHIZUKU_MODE = "shizuku_mode"
+    private const val PAYLOAD_REPO = "payload_repo"
     private const val CONSUMED_INSTALL_REQUEST = "consumed_install_request"
+    const val DEFAULT_PAYLOAD_REPO = "goisneto/Root-My-Galaxy-Payloads"
+    private val PAYLOAD_REPO_PATTERN = Regex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})?/[A-Za-z0-9._-]+$")
 
     fun accentColor(context: Context): AccentColor = AccentColor.fromStoredValue(
         prefs(context).getString(ACCENT_COLOR, null),
@@ -72,6 +75,31 @@ object AppPreferences {
         prefs(context).edit()
             .putBoolean(SHIZUKU_MODE, enabled)
             .apply()
+    }
+
+    fun payloadRepo(context: Context): String =
+        prefs(context).getString(PAYLOAD_REPO, null)?.takeIf { it.isNotBlank() }
+            ?: DEFAULT_PAYLOAD_REPO
+
+    fun setPayloadRepo(context: Context, repo: String) {
+        prefs(context).edit()
+            .putString(PAYLOAD_REPO, repo)
+            .apply()
+    }
+
+    /** Accepts "owner/repo" or a github.com URL and returns the normalized "owner/repo" slug, or null if invalid. */
+    fun normalizePayloadRepo(input: String): String? {
+        var value = input.trim()
+            .removePrefix("https://")
+            .removePrefix("http://")
+            .removePrefix("www.")
+            .removePrefix("github.com/")
+            .removeSuffix("/")
+            .removeSuffix(".git")
+        val parts = value.split("/").filter { it.isNotBlank() }
+        if (parts.size != 2) return null
+        value = "${parts[0]}/${parts[1]}"
+        return value.takeIf { PAYLOAD_REPO_PATTERN.matches(it) }
     }
 
     @Synchronized

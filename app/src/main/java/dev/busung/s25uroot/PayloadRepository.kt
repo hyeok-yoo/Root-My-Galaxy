@@ -16,6 +16,12 @@ data class VerifiedPayloads(
 )
 
 class PayloadRepository(private val context: Context) {
+    private val repoSlug = AppPreferences.normalizePayloadRepo(AppPreferences.payloadRepo(context))
+        ?: AppPreferences.DEFAULT_PAYLOAD_REPO
+    private val commitApiUrl = "https://api.github.com/repos/$repoSlug/git/ref/heads/main"
+    private val rawRepository = "https://raw.githubusercontent.com/$repoSlug"
+    private val mutableRawPrefix = "$rawRepository/main/"
+
     fun loadTargets(): List<TargetProfile> {
         val commit = resolveMainCommit()
         val manifestBytes = downloadBytes(rawUrl(commit, "support/targets-v3.json"), MAX_MANIFEST_BYTES)
@@ -91,7 +97,7 @@ class PayloadRepository(private val context: Context) {
     }
 
     private fun resolveMainCommit(): String {
-        val response = downloadBytes(COMMIT_API_URL, MAX_COMMIT_RESPONSE_BYTES)
+        val response = downloadBytes(commitApiUrl, MAX_COMMIT_RESPONSE_BYTES)
         val commit = JSONObject(response.toString(Charsets.UTF_8))
             .getJSONObject("object")
             .getString("sha")
@@ -99,11 +105,11 @@ class PayloadRepository(private val context: Context) {
         return commit
     }
 
-    private fun rawUrl(commit: String, path: String) = "$RAW_REPOSITORY/$commit/$path"
+    private fun rawUrl(commit: String, path: String) = "$rawRepository/$commit/$path"
 
     private fun pinArtifactUrl(url: String, commit: String): String {
-        require(url.startsWith(MUTABLE_RAW_PREFIX)) { context.getString(R.string.repo_url_invalid) }
-        return "$RAW_REPOSITORY/$commit/${url.removePrefix(MUTABLE_RAW_PREFIX)}"
+        require(url.startsWith(mutableRawPrefix)) { context.getString(R.string.repo_url_invalid) }
+        return "$rawRepository/$commit/${url.removePrefix(mutableRawPrefix)}"
     }
 
     private fun downloadBytes(url: String, maximum: Int): ByteArray {
@@ -136,11 +142,6 @@ class PayloadRepository(private val context: Context) {
         }
 
     companion object {
-        private const val COMMIT_API_URL =
-            "https://api.github.com/repos/goisneto/Root-My-Galaxy-Payloads/git/ref/heads/main"
-        private const val RAW_REPOSITORY =
-            "https://raw.githubusercontent.com/goisneto/Root-My-Galaxy-Payloads"
-        private const val MUTABLE_RAW_PREFIX = "$RAW_REPOSITORY/main/"
         private const val MAX_COMMIT_RESPONSE_BYTES = 16 * 1024
         private const val MAX_MANIFEST_BYTES = 256 * 1024
     }

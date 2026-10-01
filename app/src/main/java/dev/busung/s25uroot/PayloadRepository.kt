@@ -107,9 +107,17 @@ class PayloadRepository(private val context: Context) {
 
     private fun rawUrl(commit: String, path: String) = "$rawRepository/$commit/$path"
 
+    /**
+     * A manifest may reference artifacts still hosted on another repo (e.g. a fork that
+     * only rehosts part of the catalog). Same-repo URLs get pinned to the resolved commit;
+     * cross-repo URLs are only required to stay on raw.githubusercontent.com.
+     */
     private fun pinArtifactUrl(url: String, commit: String): String {
-        require(url.startsWith(mutableRawPrefix)) { context.getString(R.string.repo_url_invalid) }
-        return "$rawRepository/$commit/${url.removePrefix(mutableRawPrefix)}"
+        if (url.startsWith(mutableRawPrefix)) {
+            return "$rawRepository/$commit/${url.removePrefix(mutableRawPrefix)}"
+        }
+        require(url.startsWith(RAW_GITHUBUSERCONTENT_PREFIX)) { context.getString(R.string.repo_url_invalid) }
+        return url
     }
 
     private fun downloadBytes(url: String, maximum: Int): ByteArray {
@@ -142,6 +150,7 @@ class PayloadRepository(private val context: Context) {
         }
 
     companion object {
+        private const val RAW_GITHUBUSERCONTENT_PREFIX = "https://raw.githubusercontent.com/"
         private const val MAX_COMMIT_RESPONSE_BYTES = 16 * 1024
         private const val MAX_MANIFEST_BYTES = 256 * 1024
     }
